@@ -1,0 +1,11 @@
+
+          <span class="user">
+            {% if request.user.is_authenticated %}
+              Hello,  {{ request.user.username }}
+              <a href="{% url 'logout' %}">logout</a>
+              
+            {% else %}
+              <a href="{% url "login" %}">Log-in</a>
+              <a href="{% url "register" %}" style='margin-left: 20px;'>Register</a>
+            {% endif %}
+        

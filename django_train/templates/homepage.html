@@ -1,0 +1,30 @@
+{% extends "base.html" %} 
+{% load static %} 
+
+{% block title %}Home{% endblock title %} 
+
+{% block content %}
+<div style="text-align: center; font-size: x-large">Homepage</div>
+
+<div>
+  <p>Authorization</p>
+  <div style="margin-left: 30px">
+    <a href="{% url 'login' %}">login</a>
+    <br />
+    <a href="{% url 'register' %}">register</a>
+    <br />
+    <a href="{% url 'logout' %}">logout</a>
+  </div>
+  <p>Permissions</p>
+  <div style="margin-left: 30px">
+    
+    {% if user.is_staff %} 
+    <a href="{% url 'staff-only' %}">staff-only</a>
+    <br />
+    {% else %}
+    <p>staff-only page is hidden, You do not have a permession.</p>
+    {% endif %}
+    <a href="{% url 'free-access' %}">free-access</a>
+  </div>
+</div>
+{% endblock content %}

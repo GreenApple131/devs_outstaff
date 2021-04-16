@@ -1,0 +1,11 @@
+{
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=119",
+        // "--load-plugins=[pylint_django]" -- вот эта строка все ломала, но никакого предупреждения не было
+    ],
+    "python.linting.pylintEnabled": false,
+    "python.linting.pycodestyleEnabled": false,
+    "python.linting.banditEnabled": false,
+}
