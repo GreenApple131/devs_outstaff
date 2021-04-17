@@ -1,17 +1,20 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.db import transaction
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpResponse
 
 from . import forms
 from .decorators import unauthenticated_user, allowed_users
 
 
 @unauthenticated_user
+@transaction.atomic
 def registerUser(request):
     form = forms.CreateUserForm()
+    profile_form = forms.ProfileForm()
 
     if request.method == "POST":
         form = forms.CreateUserForm(request.POST)
@@ -21,14 +24,19 @@ def registerUser(request):
 
             group = Group.objects.get(name='customer')
             user.groups.add(group)
-
+    
             messages.success(request, 'Account was created for ' + username)
+
+            # profile_form = forms.ProfileForm(request.POST, instance=request.user.profile)
+            # profile_form.save
+
+            # messages.success(request, 'Your profile was updated!')
 
             return redirect('login')
         else:
             messages.error(request, 'Something went wrong')
 
-    context = {'form': form}
+    context = {'form': form, 'profile_form': profile_form}
     return render(request, 'account/register.html', context)
 
 
@@ -58,12 +66,10 @@ def logoutUser(request):
     return redirect('homepage')
 
 
-
-
 @allowed_users(allowed_roles=['staff'])
 def staff_only(request):
     return render(request, 'account/staff_only.html', {})
-    
+
 
 def free_access(request):
     return render(request, 'account/free_access.html', {})
