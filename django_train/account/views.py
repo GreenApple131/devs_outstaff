@@ -1,13 +1,45 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 
-from . import forms
+from . import forms, models
 from .decorators import unauthenticated_user, allowed_users
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
+@transaction.atomic
+def profilePage(request):
+    # Updating profile
+    if request.method == 'POST':
+        user_form = forms.UserForm(request.POST, instance=request.user)
+        profile_form = forms.ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Account was updated successfully!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Something went wrong')
+    else:
+        user_form = forms.UserForm(instance=request.user)
+        profile_form = forms.ProfileForm(instance=request.user.profile)
+    context = {'user_form': user_form, 'profile_form': profile_form}
+    return render(request, 'account/userpage.html', context)
+
+
+@allowed_users(allowed_roles=['staff'])
+def staff_only(request):
+    return render(request, 'account/staff_only.html', {})
+
+
+def free_access(request):
+    return render(request, 'account/free_access.html', {})
 
 
 @unauthenticated_user
@@ -24,7 +56,7 @@ def registerUser(request):
 
             group = Group.objects.get(name='customer')
             user.groups.add(group)
-    
+
             messages.success(request, 'Account was created for ' + username)
 
             # profile_form = forms.ProfileForm(request.POST, instance=request.user.profile)
@@ -64,12 +96,3 @@ def logoutUser(request):
     logout(request)
 
     return redirect('homepage')
-
-
-@allowed_users(allowed_roles=['staff'])
-def staff_only(request):
-    return render(request, 'account/staff_only.html', {})
-
-
-def free_access(request):
-    return render(request, 'account/free_access.html', {})

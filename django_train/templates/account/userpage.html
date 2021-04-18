@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+{% block title %}
+    Profile
+{% endblock title %}
+    
+{% block content %}
+<div>
+    <a href="{% url "homepage" %}"><h3 id="form-title" style='color:black'>HOMEPAGE</h3></a>
+</div>
+<h2>{{ user.get_full_name }}</h2>
+<ul>
+    <li>Username: {{ user.username }}</li>
+    <li>Joined here: {{user.profile.date_joined}}</li>
+</ul>
+
+<h2>Update profile</h2>
+<form enctype="multipart/form-data" method="POST">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+    <button type="submit">Save changes</button>
+</form>
+{% endblock content %}
+    
