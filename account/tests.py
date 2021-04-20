@@ -8,7 +8,7 @@ class UserTestCase(TestCase):
         username = 'testcase'
         password = 'hellopass'
         u = User(username=username)
-        u.set_password(password)
+        u.save_password(password)
         u.save()
         self.assertEqual(u.username, username)
         self.assertTrue(u.check_password(password))
