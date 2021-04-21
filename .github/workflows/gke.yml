@@ -16,11 +16,6 @@ on:
   push:
     branches:
     - master
-    - dev
-  pull_request:
-    branches:
-    - master
-    - dev
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
