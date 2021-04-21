@@ -6,4 +6,4 @@ RUN pip install wheel
 RUN pip install -r requirements.txt
 ADD . /code/
 COPY . .
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app.wsgi"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "django_train.wsgi"]
