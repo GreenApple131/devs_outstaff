@@ -3,7 +3,7 @@ services:
     web:
       restart: always
       build: .
-      command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:5000"
+      command: bash -c "python manage.py runserver 0.0.0.0:5000"
       volumes:
         - /home/dmytro/Projects/python/devs_outstaff/tasks
         - .:/code

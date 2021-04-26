@@ -13,7 +13,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
     price = models.FloatField(null=True)
     category = models.CharField(max_length=200, null=True, choices=CATEGORY)
-    description = models.CharField(max_length=200, null=True)
+    description = models.TextField(max_length=1000, null=True)
     date_created = models.DateTimeField(default=datetime.now, null=True)
 
     def __str__(self):

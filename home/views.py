@@ -7,4 +7,3 @@ from django.contrib import messages
 def homepage(request):
     context = {}
     return render(request, 'homepage.html', context)
-    
