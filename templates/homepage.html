@@ -22,16 +22,29 @@
     <a href="{% url 'staff-only' %}">staff-only</a>
     <br />
     {% else %}
-    <p>staff-only page is hidden, You do not have a permession.</p>
+    <p>Staff-only page is hidden, You do not have a permession.</p>
     {% endif %}
     <a href="{% url 'free-access' %}">free-access</a>
   </div>
   <p>Profile</p>
   <div style="margin-left: 30px">
-    
     {% if request.user.is_authenticated %} 
     <a href="{% url 'profile' %}">Profile</a>
+    {% else %}
+    <p>You are not authenticated.</p>
     {% endif %}  
   </div>
+
+  <hr>
+
+  <p>Shop (products / orders / cart)</p>
+  <div style="margin-left: 30px">
+    {% if request.user.is_authenticated %} 
+    <a href="{% url 'shop' %}">Shop</a>
+    {% else %}
+    <p>You are not authenticated.</p>
+    {% endif %}  
+  </div>
+
 </div>
 {% endblock content %}
