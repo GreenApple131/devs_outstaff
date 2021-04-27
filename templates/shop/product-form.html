@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shop</title> 
+  </head>
+  <body>
+    <div>
+      <a href="{% url 'homepage' %}"><h3 id="form-title" style='color:black'>HOMEPAGE</h3></a>
+    </div>
+    <div style="font-size: x-large; font:bold; text-align:center">
+        <a href="{% url 'shop' %}">Shop page</a>
+    </div>
+
+    <div>
+      
+      {% if info == 'create' %}
+      <p style="font-size: large;">Create product</p>
+      {% else %}
+      <p style="font-size: large;">Update product</p>
+      {% endif %}
+        
+      <form enctype="multipart/form-data" method="post" style="margin-left: 30px">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <hr>
+
+  </body>
+</html>

@@ -19,6 +19,15 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return "/product/%i" % self.id
+
+    def get_absolute_update_url(self):
+        return "/product/%i/update" % self.id
+
+    def get_absolute_delete_url(self):
+        return "/product/%i/delete" % self.id
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, null=True)

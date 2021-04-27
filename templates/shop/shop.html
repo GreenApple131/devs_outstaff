@@ -6,28 +6,40 @@
   </head>
   <body>
     <div>
-      <a href="{% url "homepage" %}"><h3 id="form-title" style='color:black'>HOMEPAGE</h3></a>
+      <a href="{% url 'homepage' %}"><h3 id="form-title" style='color:black'>HOMEPAGE</h3></a>
     </div>
     <div style="font-size: x-large; font:bold; text-align:center">
-        Shop page
+        <a href="{% url 'shop' %}">Shop page</a>
     </div>
 
     <div>
       <p style="font-size: large;">List of products</p>
       <div style="margin-left: 30px">
         {% for product in product_list %}
-        <li>{{ product.id }} {{product.name}} - ${{product.price}}</li> <br />
+        <li><a href="{{ product.get_absolute_url }}">{{product.name}} - ${{product.price}}</a></li> <br />
         {% endfor %}
       </div>
+      <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
     </div>
     <hr>
-    <div>
-      <p style="font-size: large;">Create product</p>
-      <form enctype="multipart/form-data" method="POST" style="margin-left: 30px">
-        {% csrf_token %}
-        {{ create_form.as_p }}
-        <button type="submit">Submit</button>
-      </form>
+    <div style="margin-top:30px; margin-bottom:30px;">
+      <a href="{% url 'product-create' %}" style="font-size: large;">Create new product</a>
     </div>
     <hr>
 
