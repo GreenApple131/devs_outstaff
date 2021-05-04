@@ -1,47 +1,66 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Shop</title> 
-  </head>
-  <body>
-    <div>
-      <a href="{% url 'homepage' %}"><h3 id="form-title" style='color:black'>HOMEPAGE</h3></a>
-    </div>
-    <div style="font-size: x-large; font:bold; text-align:center">
-        <a href="{% url 'shop' %}">Shop page</a>
-    </div>
+{% extends 'index.html' %} 
+{% load static %} 
 
-    <div>
-      <p style="font-size: large;">List of products</p>
-      <div style="margin-left: 30px">
-        {% for product in product_list %}
-        <li><a href="{{ product.get_absolute_url }}">{{product.name}} - ${{product.price}}</a></li> <br />
-        {% endfor %}
+
+{% block title %} Shop {% endblock title %} 
+
+
+{% block content %}
+
+<div>
+  <a href="{% url 'homepage' %}">
+    <h3 id="form-title" style="color: black">HOMEPAGE</h3>
+  </a>
+  <a href="{% url 'shop:cart' %}">Cart</a>
+</div>
+<div style="font-size: x-large; font: bold; text-align: center">
+  <a href="{% url 'shop:shop' %}" style="color: black">Shop page</a>
+</div>
+
+<div>
+  <p style="font-size: large;">List of products</p>
+  <div style="margin-left: 30px">
+    {% for product in product_list %}
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="{{ product.get_absolute_url }}">{{ product.name }} - ${{ product.price }}</a>
+        </h5>
+        <p class="card-text">
+          {{ product.description }}
+        </p>
+        <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Details</a>
       </div>
-      <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-            {% endif %}
-    
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-    
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
     </div>
     <hr>
-    <div style="margin-top:30px; margin-bottom:30px;">
-      <a href="{% url 'product-create' %}" style="font-size: large;">Create new product</a>
-    </div>
-    <hr>
+    {% endfor %}
+  </div>
+</div>
 
-  </body>
-</html>
+<div class="pagination" style="margin: auto; padding: 5px;">
+  <span class="step-links" style="width: 100%; text-align: center;">
+    {% if page_obj.has_previous %}
+    <a href="?page=1">&laquo; first</a>
+    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+    {% endif %}
+
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+    {% endif %}
+  </span>
+</div>
+
+<hr />
+<div style="margin-top: 30px; margin-bottom: 30px">
+  <a href="{% url 'shop:product-create' %}" style="font-size: large"
+    >Create new product</a
+  >
+</div>
+<hr />
+
+{% endblock content %}

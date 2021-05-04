@@ -1,0 +1,34 @@
+{% extends "index.html" %}
+
+{% load static %}
+
+{% block title %}
+{{ object.name }}
+{% endblock title %}
+
+{% block content %}
+  
+  <div>
+      <a href="{% url "homepage" %}"><h3 id="form-title" style='color:black'>HOMEPAGE</h3></a>
+    </div>
+    <div style="font-size: x-large; font:bold; ">
+      <a href="{% url 'shop:shop' %}">Shop page</a>
+  </div>
+
+  <div>
+      <p style="text-align: center; font-size: xx-large; font:bold;">Cart</p>
+  </div>
+
+  <div>
+      {% for item in object %}
+      <p>
+          {{item.quantity}} - {{ item.product.name }} - {{item.get_products_price}}
+      </p>
+      {% endfor %}
+  </div>
+  <div>
+    Total price = {{ total_price }}
+  </div>
+    
+{% endblock content %}
+

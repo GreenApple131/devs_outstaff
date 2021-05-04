@@ -1,15 +1,18 @@
+{% extends "index.html" %}
+
 {% load static %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{{ object.name }}</title> 
-  </head>
-  <body>
-    <div>
+
+{% block title %}
+<title>{{ object.name }}</title> 
+{% endblock title %}
+
+{% block content %}
+  
+  <div>
       <a href="{% url "homepage" %}"><h3 id="form-title" style='color:black'>HOMEPAGE</h3></a>
     </div>
     <div style="font-size: x-large; font:bold; ">
-      <a href="{% url 'shop' %}">Shop page</a>
+      <a href="{% url 'shop:shop' %}">Shop page</a>
   </div>
     <div style="font-size: x-large; font:bold; text-align:center">
         Product page
@@ -17,13 +20,24 @@
 
     <div>
       <p style="font-size: large;">{{ object.name }} - ${{ object.price }}</p>
+      <p style="font-size: large;">Category: {{ object.category }}</p>
+      <p style="font-size: large;">Description: {{ object.description }}</p>
+      <p style="font-size: large;">Date created: {{ object.date_created }}</p>
+      <p style="font-size: large;">Date updated: {{ object.date_updated }}</p>
+      <p>
+        Image: 
+        <img src="{{ object.image.url }}" style="width: 150px; height:auto">
+      </p>
     </div>
+
+    <hr>
+    <a href="{{ object.get_add_to_cart_url }}">Add to cart</a>
 
     <hr>
     <a href="{{ object.get_absolute_update_url }}">Update item</a>
 
     <hr>
     <a href="{{ object.get_absolute_delete_url }}">Delete item</a>
+    
+{% endblock content %}
 
-  </body>
-</html>

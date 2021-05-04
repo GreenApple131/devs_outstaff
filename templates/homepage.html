@@ -4,10 +4,10 @@
 {% block title %}Home{% endblock title %} 
 
 {% block content %}
-<div style="text-align: center; font-size: x-large">Homepage</div>
+<div class="h3" style="text-align: center;">Homepage</div>
 
-<div>
-  <p>Authorization</p>
+<div style="margin-left: 10px">
+  <p class="h4">Authorization</p>
   <div style="margin-left: 30px">
     <a href="{% url 'login' %}">login</a>
     <br />
@@ -15,7 +15,7 @@
     <br />
     <a href="{% url 'logout' %}">logout</a>
   </div>
-  <p>Permissions</p>
+  <p class="h4">Permissions</p>
   <div style="margin-left: 30px">
     
     {% if user.is_staff %} 
@@ -26,7 +26,7 @@
     {% endif %}
     <a href="{% url 'free-access' %}">free-access</a>
   </div>
-  <p>Profile</p>
+  <p class="h4">Profile</p>
   <div style="margin-left: 30px">
     {% if request.user.is_authenticated %} 
     <a href="{% url 'profile' %}">Profile</a>
@@ -34,13 +34,15 @@
     <p>You are not authenticated.</p>
     {% endif %}  
   </div>
+</div>
 
   <hr>
 
-  <p>Shop (products / orders / cart)</p>
+<div style="margin-left: 10px; margin-top: 10px">
+  <p class="h4">Shop (products / orders / cart)</p>
   <div style="margin-left: 30px">
     {% if request.user.is_authenticated %} 
-    <a href="{% url 'shop' %}">Shop</a>
+    <a href="{% url 'shop:shop' %}">Shop</a>
     {% else %}
     <p>You are not authenticated.</p>
     {% endif %}  
