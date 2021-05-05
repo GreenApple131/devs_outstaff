@@ -56,6 +56,16 @@ class Product(models.Model):
             'id': self.id
         })
 
+    def get_remove_one_from_cart_url(self):
+        return reverse("shop:remove-one-from-cart", kwargs={
+            'id': self.id
+        })
+
+    def get_remove_from_cart_url(self):
+        return reverse("shop:remove-from-cart", kwargs={
+            'id': self.id
+        })
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, null=True)

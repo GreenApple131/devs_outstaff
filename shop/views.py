@@ -80,7 +80,7 @@ class CartView(LoginRequiredMixin, View):
             }
             messages.warning(request, "You do not have an active order")
             # return render(request, 'shop/cart.html', context)
-            return redirect('/shop/')
+            return redirect('shop:shop')
 
 
 def add_to_cart(request, id):
@@ -97,7 +97,7 @@ def add_to_cart(request, id):
         cart.save()
 
         messages.success(request, 'Product quantity was updated!')
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return redirect('shop:cart')
     else:
         ordered_product = models.Cart.objects.create(
             customer=profile,
@@ -105,4 +105,48 @@ def add_to_cart(request, id):
         )
 
         messages.success(request, 'Product has been added to cart!')
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return redirect('shop:cart')
+
+
+def remove_one_from_cart(request, id):
+    product = get_object_or_404(models.Product, id=id)
+    profile = Profile.objects.get(user=request.user)
+    ordered_product = models.Cart.objects.filter(
+        customer=profile,
+        product=product,
+    )
+
+    if ordered_product.exists():
+        cart = ordered_product[0]
+
+        if cart.quantity == 1:
+            return remove_from_cart(request, id)
+        else:
+            cart.quantity -= 1
+
+        cart.save()
+
+        messages.success(request, 'Product quantity was updated!')
+        return redirect('shop:cart')
+    else:
+        messages.error(request, 'Product was not in your cart!')
+        return redirect('shop:cart')
+
+
+def remove_from_cart(request, id):
+    model_product = get_object_or_404(models.Product, id=id)
+    profile = Profile.objects.get(user=request.user)
+    ordered_product = models.Cart.objects.filter(
+        customer=profile,
+        product=model_product,
+    )
+    if ordered_product.exists():
+        ordered_product = ordered_product[0]
+        ordered_product.delete()
+
+        messages.success(request, 'Product quantity was deleted!')
+        return redirect('shop:cart')
+    else:
+
+        messages.error(request, 'Product was not in your cart!')
+        return redirect('shop:cart')

@@ -1,4 +1,6 @@
 {% block content %}
+{% include "shop/shop_header.html" %}
+
 
   <form method="post">{% csrf_token %}
     <p>Are you sure you want to delete "{{ object.name }}"?</p>

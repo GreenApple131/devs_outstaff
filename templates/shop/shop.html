@@ -7,18 +7,10 @@
 
 {% block content %}
 
-<div>
-  <a href="{% url 'homepage' %}">
-    <h3 id="form-title" style="color: black">HOMEPAGE</h3>
-  </a>
-  <a href="{% url 'shop:cart' %}">Cart</a>
-</div>
-<div style="font-size: x-large; font: bold; text-align: center">
-  <a href="{% url 'shop:shop' %}" style="color: black">Shop page</a>
-</div>
+{% include "shop/shop_header.html" %}
 
 <div>
-  <p style="font-size: large;">List of products</p>
+  <p style="font-size:xx-large; color:black; text-align: center">List of products</p>
   <div style="margin-left: 30px">
     {% for product in product_list %}
     <div class="card">

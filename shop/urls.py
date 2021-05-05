@@ -16,5 +16,7 @@ urlpatterns = [
     
     path('cart/', views.CartView.as_view(), name='cart'),
     path('add-to-cart/<int:id>', views.add_to_cart, name='add-to-cart'),
+    path('remove-one-from-cart/<int:id>', views.remove_one_from_cart, name='remove-one-from-cart'),
+    path('remove-from-cart/<int:id>', views.remove_from_cart, name='remove-from-cart'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
