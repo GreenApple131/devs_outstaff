@@ -93,6 +93,36 @@ class Cart(models.Model):
         return self.quantity*self.product.price
 
 
+class BillingData(models.Model):
+    customer = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    delivery = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.first_name} from {self.city}"
+
+
+class OrderedProductsAfterDeleting(models.Model):
+    customer = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return self.product
+
+
+class NumberOfOrder(models.Model):
+    number = models.PositiveIntegerField(unique=True, default=1)
+    products = models.ManyToManyField(OrderedProductsAfterDeleting, null=True)
+
+    def __str__(self):
+        return self.number
+
+
 class Order(models.Model):
     STATUS = (
         ('Pending', 'Pending'),
@@ -102,11 +132,13 @@ class Order(models.Model):
     )
 
     customer = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
-    products = models.ManyToManyField(Cart)
+    products = models.ManyToManyField(Cart, null=True)
+    billing_data = models.ForeignKey(
+        BillingData, related_name='billing_data', on_delete=models.SET_NULL, blank=True, null=True)
     ordered_date = models.DateTimeField(default=datetime.now, null=True)
     status = models.CharField(
         max_length=200, null=True, choices=STATUS, default='Pending')
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True, null=True)
 
     def __str__(self):
         return '{} ordered in {}'.format(self.customer.user.username, self.ordered_date)

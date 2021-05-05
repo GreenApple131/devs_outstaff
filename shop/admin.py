@@ -12,5 +12,8 @@ class ProductAdmin(admin.ModelAdmin):
 # admin.site.register(models.Product)
 admin.site.register(models.Category)
 admin.site.register(models.Order)
+admin.site.register(models.BillingData)
 admin.site.register(models.Cart)
 admin.site.register(models.Tag)
+admin.site.register(models.NumberOfOrder)
+admin.site.register(models.OrderedProductsAfterDeleting)

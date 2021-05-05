@@ -11,6 +11,7 @@ from django.contrib import messages
 
 from account.models import Profile
 from . import models
+from . import forms
 # Create your views here.
 
 
@@ -80,6 +81,76 @@ class CartView(LoginRequiredMixin, View):
             }
             messages.warning(request, "You do not have an active order")
             # return render(request, 'shop/cart.html', context)
+            return redirect('shop:shop')
+
+
+class CheckoutView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        profile = Profile.objects.get(user=self.request.user)
+        cart = models.Cart.objects.filter(customer=profile)
+        messages.info(self.request, cart)
+        try:
+            # order = models.Order.objects.get(customer=profile, products=cart)
+            form = forms.CheckoutForm()
+            context = {
+                'form': form,
+            }
+            return render(self.request, 'shop/checkout.html', context)
+        except ObjectDoesNotExist:
+            messages.warning(
+                self.request, "You do not have items in your cart!")
+            return redirect('shop:shop')
+
+    def post(self, *args, **kwargs):
+        profile = Profile.objects.get(user=self.request.user)
+        cart = models.Cart.objects.filter(customer=profile)
+        billing_qs = models.BillingData.objects.filter(customer=profile)
+
+        form = forms.CheckoutForm(self.request.POST or None)
+        try:
+            if form.is_valid():
+                first_name = form.cleaned_data.get('first_name')
+                last_name = form.cleaned_data.get('last_name')
+                phone_number = form.cleaned_data.get('phone_number')
+                email = form.cleaned_data.get('email')
+                city = form.cleaned_data.get('city')
+                delivery = form.cleaned_data.get('delivery')
+                payment_option = form.cleaned_data.get('payment_option')
+
+                if billing_qs.exists():
+                    models.BillingData.objects.filter(customer=profile).update(
+                        customer=profile,
+                        first_name=first_name,
+                        last_name=last_name,
+                        phone_number=phone_number,
+                        email=email,
+                        city=city,
+                        delivery=delivery
+                    )
+                else:
+                    models.BillingData.objects.create(
+                        customer=profile,
+                        first_name=first_name,
+                        last_name=last_name,
+                        phone_number=phone_number,
+                        email=email,
+                        city=city,
+                        delivery=delivery
+                    )
+                order = models.Order.objects.create(
+                    customer=profile,
+                    billing_data=models.BillingData.objects.get(customer=profile)
+                )
+
+                order.products.add(*cart)
+
+                messages.warning(self.request, "Thanks, order created!")
+                return redirect('shop:shop')
+            else:
+                messages.warning(self.request, "Form is not valid. Please, try again!")
+                return redirect('shop:shop')
+        except ObjectDoesNotExist:
+            messages.warning(self.request, "You do not have products in your cart!")
             return redirect('shop:shop')
 
 

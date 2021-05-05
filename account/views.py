@@ -53,7 +53,13 @@ def registerUser(request):
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
-
+            
+            check_group = Group.objects.filter(name='customer')
+            if check_group.exists():
+                pass
+            else:
+                Group.objects.create(name='customer')
+            
             group = Group.objects.get(name='customer')
             user.groups.add(group)
 

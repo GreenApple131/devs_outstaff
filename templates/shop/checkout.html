@@ -1,0 +1,61 @@
+{% extends "index.html" %}
+
+{% load static %}
+
+{% block title %}Checkout page{% endblock title %}
+
+{% block content %}
+  
+{% include "shop/shop_header.html" %}
+
+    <div style="font-size: x-large; font:bold; text-align:center">
+        Checkout page
+    </div>
+
+    <form class="row g-3" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="col-md-6">
+        <label class="form-label">First Name</label>
+          {{ form.first_name }}
+        </span>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Last Name</label>
+        {{ form.last_name }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">Phone Number</label>
+        {{ form.phone_number }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">Email</label>
+        {{ form.email }}
+      </div>
+      <div class="col-12" style="max-width: 200px">
+        <label class="form-label">City</label>
+        {{ form.city }}
+      </div>
+      <div class="col-12" style="max-width: 200px">
+        <label class="form-label">Delivery method</label>
+        {{ form.delivery }}
+      </div>
+
+      <div class="col-sm-10">
+        <label class="form-label">Payment method</label>
+        {% for value, name in form.fields.payment_option.choices %}
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payment_option" id="{{ name }}" value="{{ value }}" required>
+            <label class="form-check-label" for="{{ name }}">
+              {{ name }}
+            </label>
+          </div>
+          
+        {% endfor %}
+      </div>
+      
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Payment</button>
+      </div>
+    </form>
+    
+{% endblock content %}
