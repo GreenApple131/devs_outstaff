@@ -84,7 +84,7 @@ class Cart(models.Model):
         verbose_name_plural = 'Cart'
 
     def __str__(self):
-        return f"{self.quantity} of {self.product.name} ordered {self.customer.user.username}"
+        return f"{self.quantity} of {self.product.name} in cart of {self.customer.user.username}"
 
     def get_quantity(self):
         return self.quantity
@@ -106,21 +106,13 @@ class BillingData(models.Model):
         return f"{self.first_name} from {self.city}"
 
 
-class OrderedProductsAfterDeleting(models.Model):
-    customer = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+class OrderedProduct(models.Model):
+    order_number = models.PositiveIntegerField(null=False, blank=False, default=1)
+    copy_of_product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return self.product
-
-
-class NumberOfOrder(models.Model):
-    number = models.PositiveIntegerField(unique=True, default=1)
-    products = models.ManyToManyField(OrderedProductsAfterDeleting, null=True)
-
-    def __str__(self):
-        return self.number
+        return f"#{self.order_number} | {self.quantity} of {self.copy_of_product.name}"
 
 
 class Order(models.Model):
@@ -132,13 +124,15 @@ class Order(models.Model):
     )
 
     customer = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
-    products = models.ManyToManyField(Cart, null=True)
+    ordered_product = models.ManyToManyField(OrderedProduct, null=True)
     billing_data = models.ForeignKey(
         BillingData, related_name='billing_data', on_delete=models.SET_NULL, blank=True, null=True)
     ordered_date = models.DateTimeField(default=datetime.now, null=True)
+    order_number = models.PositiveIntegerField(null=False, blank=False, default=1)
     status = models.CharField(
         max_length=200, null=True, choices=STATUS, default='Pending')
     tags = models.ManyToManyField(Tag, blank=True, null=True)
+    complete = models.BooleanField(default=False)
 
     def __str__(self):
         return '{} ordered in {}'.format(self.customer.user.username, self.ordered_date)

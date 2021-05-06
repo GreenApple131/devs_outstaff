@@ -8,11 +8,16 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
+from random import randint
 
 from account.models import Profile
 from . import models
 from . import forms
 # Create your views here.
+
+
+def create_order_number(n):
+    return n+1
 
 
 class ProductDetailView(DetailView):
@@ -88,7 +93,10 @@ class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         profile = Profile.objects.get(user=self.request.user)
         cart = models.Cart.objects.filter(customer=profile)
-        messages.info(self.request, cart)
+        # for i in cart:
+        #     messages.info(self.request, i.customer)
+        #     messages.info(self.request, i.product)
+        #     messages.info(self.request, i.quantity)
         try:
             # order = models.Order.objects.get(customer=profile, products=cart)
             form = forms.CheckoutForm()
@@ -137,20 +145,40 @@ class CheckoutView(LoginRequiredMixin, View):
                         city=city,
                         delivery=delivery
                     )
+
+                ordered_product = models.OrderedProduct.objects.last()
+                if ordered_product is None:
+                    order_number = 1
+                else:
+                    order_number = create_order_number(
+                        ordered_product.order_number)
+
                 order = models.Order.objects.create(
                     customer=profile,
-                    billing_data=models.BillingData.objects.get(customer=profile)
+                    billing_data=models.BillingData.objects.get(
+                        customer=profile),
+                    order_number=order_number
                 )
 
-                order.products.add(*cart)
+                for p in cart:
+                    o_product = models.OrderedProduct.objects.create(
+                        order_number=order_number,
+                        copy_of_product=p.product,
+                        quantity=p.quantity
+                    )
+                    order.ordered_product.add(o_product)
 
-                messages.warning(self.request, "Thanks, order created!")
+                cart.delete()
+
+                messages.success(self.request, "Thanks, order created!")
                 return redirect('shop:shop')
             else:
-                messages.warning(self.request, "Form is not valid. Please, try again!")
+                messages.warning(
+                    self.request, "Form is not valid. Please, try again!")
                 return redirect('shop:shop')
         except ObjectDoesNotExist:
-            messages.warning(self.request, "You do not have products in your cart!")
+            messages.warning(
+                self.request, "You do not have products in your cart!")
             return redirect('shop:shop')
 
 
