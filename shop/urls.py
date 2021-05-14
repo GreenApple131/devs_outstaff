@@ -9,6 +9,8 @@ app_name = 'shop'
 
 urlpatterns = [
     path('shop/', views.ProductListView.as_view(), name='shop'),
+    path('ajax/products-search', views.HeaderSearchView.as_view(), name='ajax-products-search'),
+    path('shop/search/', views.SearchResultsView.as_view(), name='search'),
     path('product-create/', views.ProductCreateView.as_view(), name='product-create'),
     path('product/<int:pk>', views.ProductDetailView.as_view(), name='product-detail'),
     path('product/<int:pk>/update', views.ProductUpdateView.as_view(), name='product-update'),

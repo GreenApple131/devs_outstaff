@@ -124,14 +124,14 @@ class Order(models.Model):
     )
 
     customer = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
-    ordered_product = models.ManyToManyField(OrderedProduct, null=True)
+    ordered_product = models.ManyToManyField(OrderedProduct)
     billing_data = models.ForeignKey(
         BillingData, related_name='billing_data', on_delete=models.SET_NULL, blank=True, null=True)
     ordered_date = models.DateTimeField(default=datetime.now, null=True)
     order_number = models.PositiveIntegerField(null=False, blank=False, default=1)
     status = models.CharField(
         max_length=200, null=True, choices=STATUS, default='Pending')
-    tags = models.ManyToManyField(Tag, blank=True, null=True)
+    tags = models.ManyToManyField(Tag, blank=True)
     complete = models.BooleanField(default=False)
 
     def __str__(self):

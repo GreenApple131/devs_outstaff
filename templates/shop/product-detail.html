@@ -1,4 +1,4 @@
-{% extends "index.html" %}
+{% extends "shop/shop.html" %}
 
 {% load static %}
 
@@ -25,6 +25,7 @@
         <img src="{{ object.image.url }}" style="width: 150px; height:auto">
       </p>
     </div>
+
 
     <hr>
     <a href="{{ object.get_add_to_cart_url }}">Add to cart</a>

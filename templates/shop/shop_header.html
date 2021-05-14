@@ -14,10 +14,34 @@
           </li>
 
         </ul>
-        <form class="d-flex">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <form action="{% url 'shop:search' %}" method="GET" class="d-flex">
+          <input class="form-control me-2" id="search-bar" name="q" type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
-      </div>
+        </div>
     </div>
   </nav>
+
+  <script>
+    $( function() {
+      var availableNames = [
+          {% for product in product_list %}
+              "{{product.name}}",
+          {% endfor %}
+      ];
+      var availableTags = {
+          {% for product in product_list %}
+              "{{product.name}}": "{{product.get_absolute_url}}",
+          {% endfor %}
+      };
+      
+      $( "#search-bar" ).autocomplete({
+        source: availableNames,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href=availableTags[ui.item.value]
+        }
+      });
+      
+    } );
+    </script>

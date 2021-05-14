@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
+from django.db.models import Q
 from random import randint
 
 from account.models import Profile
@@ -20,10 +21,15 @@ def create_order_number(n):
     return n+1
 
 
-class ProductDetailView(DetailView):
+class HeaderSearchView(View):
     model = models.Product
-    context_object_name = 'object'
-    template_name = "shop/product-detail.html"
+    template_name = "shop/shop_header.html"
+
+    def get(self, *args, **kwargs):
+        context = {}
+        queryset_products = models.Product.objects.all()
+        context['ajax_products'] = queryset_products
+        return HttpResponse({'ajax_products': context})
 
 
 class ProductListView(ListView):
@@ -36,11 +42,23 @@ class ProductListView(ListView):
     template_name = "shop/shop.html"
 
 
+class ProductDetailView(DetailView):
+    model = models.Product
+    context_object_name = 'object'
+    template_name = "shop/product-detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset_products = models.Product.objects.all()
+        context['product_list'] = queryset_products
+        return context
+
+
 class ProductCreateView(CreateView):
     model = models.Product
     fields = ['name', 'price', 'category', 'description', 'image', 'available']
     template_name = 'shop/product-form.html'
-    success_url = '/shop/'
+    success_url = 'shop:shop'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,7 +70,7 @@ class ProductUpdateView(UpdateView):
     model = models.Product
     fields = ['name', 'price', 'category', 'description', 'image', 'available']
     template_name = 'shop/product-form.html'
-    success_url = '/shop/'
+    success_url = 'shop:shop'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -92,13 +110,7 @@ class CartView(LoginRequiredMixin, View):
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         profile = Profile.objects.get(user=self.request.user)
-        cart = models.Cart.objects.filter(customer=profile)
-        # for i in cart:
-        #     messages.info(self.request, i.customer)
-        #     messages.info(self.request, i.product)
-        #     messages.info(self.request, i.quantity)
         try:
-            # order = models.Order.objects.get(customer=profile, products=cart)
             form = forms.CheckoutForm()
             context = {
                 'form': form,
@@ -249,3 +261,15 @@ def remove_from_cart(request, id):
 
         messages.error(request, 'Product was not in your cart!')
         return redirect('shop:cart')
+
+
+class SearchResultsView(ListView):
+    model = models.Product
+    template_name = 'shop/search_results.html'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = models.Product.objects.filter(
+            Q(name__icontains=query) | Q(category__name__icontains=query)
+        )
+        return object_list

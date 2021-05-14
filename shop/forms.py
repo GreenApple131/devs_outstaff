@@ -56,3 +56,4 @@ class CheckoutForm(forms.Form):
     # форма для вибору способу оплати: один з кружочків
     payment_option = forms.ChoiceField(
         widget=forms.RadioSelect(), choices=PAYMENT_CHOICES)
+
