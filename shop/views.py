@@ -6,10 +6,12 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.db.models import Q
+from django.core import serializers
 from random import randint
+import json
 
 from account.models import Profile
 from . import models
@@ -25,11 +27,19 @@ class HeaderSearchView(View):
     model = models.Product
     template_name = "shop/shop_header.html"
 
-    def get(self, *args, **kwargs):
-        context = {}
-        queryset_products = models.Product.objects.all()
-        context['ajax_products'] = queryset_products
-        return HttpResponse({'ajax_products': context})
+    def post(self, *args, **kwargs):
+        searched_str = json.loads(self.request.body).get('searchBar')
+        print('searched_str', searched_str)
+
+        products = models.Product.objects.filter(
+            name__icontains=searched_str
+        )
+        data = products.values()
+        return JsonResponse(list(data), safe=False)
+
+        # queryset_products = models.Product.objects.all()
+        # data = serializers.serialize('json', queryset_products)
+        # return HttpResponse(data, content_type="application/json")
 
 
 class ProductListView(ListView):
