@@ -46,7 +46,7 @@
   const csrftoken = getCookie('csrftoken');
 
 
-  function autocomplete(inp, arr) {
+  function autocomplete(inp, arr, data) {
     var currentFocus;
     inp.addEventListener("input", function(e) {
         var a, b, i, val = this.value;
@@ -65,12 +65,8 @@
             b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
             b.addEventListener("click", function(e) {
                 inp.value = this.getElementsByTagName("input")[0].value;
-                
-                
-                console.log('pressed')
-
-
                 closeAllLists();
+                redirectToProductPage(inp.value, data);
             });
             a.appendChild(b);
           }
@@ -114,6 +110,18 @@
           x[i].parentNode.removeChild(x[i]);
         }
       }
+    }
+
+    function redirectToProductPage(inpVal, data) {
+      console.log('inpVal', inpVal)
+
+      data.map((d) => {
+        if(inpVal === d.name){
+          window.location = d.absolute_url
+        }
+      })
+
+      
     }
 
     document.addEventListener("click", function (e) {
@@ -161,16 +169,12 @@
       })
       .then((res) => res.json())
       .then((data) => {
-        console.log('data', data)
-
-        results = search(inputVal, data);
-
-        autocomplete(document.getElementById("searchBar"), results);
-
+        results = search(inputVal, data.data);
+        autocomplete(document.getElementById("searchBar"), results, data.data);
       })
     }
   }
 
-  input.addEventListener('keyup', searchHandler);
+  input.addEventListener('input', searchHandler);
 
 </script>

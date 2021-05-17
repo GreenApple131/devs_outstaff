@@ -33,13 +33,19 @@ class HeaderSearchView(View):
 
         products = models.Product.objects.filter(
             name__icontains=searched_str
-        )
-        data = products.values()
-        return JsonResponse(list(data), safe=False)
-
-        # queryset_products = models.Product.objects.all()
-        # data = serializers.serialize('json', queryset_products)
-        # return HttpResponse(data, content_type="application/json")
+        )[:5]
+        p_val = products.values('id', 'name')
+        data = []
+        i = 0
+        for product in p_val:
+            obj = {
+                'id': product['id'],
+                'name': product['name'],
+                'absolute_url': products[i].get_absolute_url()
+            }
+            data.append(obj)
+            i += 1
+        return JsonResponse({'data': data})
 
 
 class ProductListView(ListView):
