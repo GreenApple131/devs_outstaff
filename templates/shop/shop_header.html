@@ -1,0 +1,180 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="{% url 'homepage' %}">Homepage</a>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="{% url 'shop:shop' %}">Shop</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'shop:cart' %}">Cart</a>
+        </li>
+
+      </ul>
+      <form action="{% url 'shop:search' %}" autocomplete="off" class="d-flex " method="GET">
+        {% csrf_token %}
+        <div class="autocomplete" style="width:fit-content">
+          <input class="form-control me-2" id="searchBar" name="q" type="search" placeholder="Search" aria-label="Search">
+        </div>
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    </div>
+  </div>
+</nav>
+
+
+
+
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken');
+
+
+  function autocomplete(inp, arr, data) {
+    var currentFocus;
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        this.parentNode.appendChild(a);
+        for (i = 0; i < arr.length; i++) {
+          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+            b = document.createElement("DIV");
+            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(val.length);
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            b.addEventListener("click", function(e) {
+                inp.value = this.getElementsByTagName("input")[0].value;
+                closeAllLists();
+                redirectToProductPage(inp.value, data);
+            });
+            a.appendChild(b);
+          }
+        }
+    });
+
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          currentFocus++;
+          addActive(x);
+        } else if (e.keyCode == 38) { //up
+          currentFocus--;
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          e.preventDefault();
+          if (currentFocus > -1) {
+            if (x) x[currentFocus].click();
+          }
+        }
+    });
+
+    function addActive(x) {
+      if (!x) return false;
+      removeActive(x);
+      if (currentFocus >= x.length) currentFocus = 0;
+      if (currentFocus < 0) currentFocus = (x.length - 1);
+      x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+      for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+      }
+    }
+
+    function closeAllLists(elmnt) {
+      var x = document.getElementsByClassName("autocomplete-items");
+      for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+          x[i].parentNode.removeChild(x[i]);
+        }
+      }
+    }
+
+    function redirectToProductPage(inpVal, data) {
+      console.log('inpVal', inpVal)
+
+      data.map((d) => {
+        if(inpVal === d.name){
+          window.location = d.absolute_url
+        }
+      })
+
+      
+    }
+
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+  }
+
+
+  const suggestions = document.querySelector('.suggestions ul');
+  var input = document.getElementById("searchBar")
+
+
+  function search(str, data) {
+    let results = [];
+    let product_names = [];
+    const val = str.toLowerCase();
+
+    data.map((i) => {
+      product_names.push(i.name)
+    })
+  
+    for (i = 0; i < product_names.length; i++) {
+      if (product_names[i].toLowerCase().indexOf(val) > -1) {
+        results.push(product_names[i]);
+      }
+    }
+  
+    return results;
+  }
+  function searchHandler(e) {
+    const inputVal = e.target.value;
+    let results = [];
+
+
+    if(e.target.value.length > 1) {
+      var url = '{% url "shop:ajax-products-search" %}';
+      fetch(url, {
+        method: "POST",
+        headers:{
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+          'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({ 'searchBar': e.target.value }),
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        results = search(inputVal, data.data);
+        autocomplete(document.getElementById("searchBar"), results, data.data);
+      })
+    }
+  }
+
+  input.addEventListener('input', searchHandler);
+
+</script>

@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+
+{% load static %}
+
+{% block title %}
+<title>{{ object.name }}</title> 
+{% endblock title %}
+
+{% block content %}
+
+{% include "shop/shop_header.html" %}
+
+    <div>
+      
+      {% if info == 'create' %}
+      <p style="font-size: large;">Create product</p>
+      {% else %}
+      <p style="font-size: large;">Update product</p>
+      {% endif %}
+        
+      <form enctype="multipart/form-data" method="post" style="margin-left: 30px">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <hr>
+
+{% endblock content %}

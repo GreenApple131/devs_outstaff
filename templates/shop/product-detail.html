@@ -1,0 +1,40 @@
+{% extends "shop/shop.html" %}
+
+{% load static %}
+
+{% block title %}
+{{ object.name }} 
+{% endblock title %}
+
+{% block content %}
+  
+{% include "shop/shop_header.html" %}
+
+    <div style="font-size: x-large; font:bold; text-align:center">
+        Product page
+    </div>
+
+    <div>
+      <p style="font-size: large;">{{ object.name }} - ${{ object.price }}</p>
+      <p style="font-size: large;">Category: {{ object.category }}</p>
+      <p style="font-size: large;">Description: {{ object.description }}</p>
+      <p style="font-size: large;">Date created: {{ object.date_created }}</p>
+      <p style="font-size: large;">Date updated: {{ object.date_updated }}</p>
+      <p>
+        Image: 
+        <img src="{{ object.image.url }}" style="width: 150px; height:auto">
+      </p>
+    </div>
+
+
+    <hr>
+    <a href="{{ object.get_add_to_cart_url }}">Add to cart</a>
+
+    <hr>
+    <a href="{{ object.get_absolute_update_url }}">Update item</a>
+
+    <hr>
+    <a href="{{ object.get_absolute_delete_url }}">Delete item</a>
+    
+{% endblock content %}
+
