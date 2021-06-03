@@ -1,0 +1,81 @@
+{% extends "index.html" %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+{% block content %}
+{% include "report/report-header.html" %}
+    
+
+<h2 style="font-weight: bold; text-align:center;">This is your entries</h2>
+  
+  <br>
+
+  <form id="form" method="GET" name="form" class="form-inline container-lg" style="padding: 15px">
+    <div class="input-group mb-3">
+      <div style="margin: 15px">
+        <label for="date_min">From Date</label>
+        <input id="date_min" name="date_min" type="date" class="form-control" style="width: 300px;" />
+      </div>
+      <div style="margin: 15px">
+        <label for="date_max">To Date</label>
+        <input id="date_max" name="date_max" type="date" class="form-control" style="width: 300px;" />
+      </div>
+      
+      <div style="margin: 15px">
+        <label for="orderingSelect">Ordering</label>
+        <select 
+          class="form-select" 
+          id='orderingSelect' 
+          name='orderingSelect' 
+          aria-label="Default select example"
+          style="width: 200px;"
+          >
+          <option selected value="-date">-date</option>
+          <option value="date">date</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" id="submit_date" class="btn btn-lg btn-warning" style="margin-left: 15px; margin-top: -10px">Filter</button>
+  </form>
+
+  <!-- ENTRIES TABLE -->
+
+  <table class="table table-success table-striped container-lg" style="text-align: center;">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Distance, Km</th>
+        <th scope="col">Duration, H:M:S</th>
+        <th scope="col">Date</th>
+        <th scope="col">Average speed, Km/h</th>
+        <th scope="col">Del</th>
+      </tr>
+    </thead>
+    <tbody id="entries-result" class="container" style="margin-top: 20px;">
+      <!-- Here will render GETed Entries -->
+      {% for entrie in data %}
+      <tr>
+
+        <th>{{entrie.id}}</th>
+        <td>{{entrie.get_distance_in_km}}</td>
+        <td>{{entrie.duration}}</td>
+        <td>{{entrie.date}}</td>
+        <td>{{entrie.get_average_speed}}</td>
+        <td>
+          <a class="btn btn-outline-danger" href="{{entrie.get_absolute_delete_url}}">Delete</a>
+        </td>
+      </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}
+

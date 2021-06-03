@@ -1,0 +1,27 @@
+{% extends "report/entries.html" %}
+
+{% load static %}
+
+{% block title %}
+{{ object.username }}
+{% endblock title %}
+
+{% block content %}
+{% include "report/report-header.html" %}
+
+    <div style="font-size: x-large; font:bold; text-align:center">
+        Entrie page of {{object.date}}
+    </div>
+
+    <div>
+      <p style="font-size: large;">Distance: {{ object.distance }} meters</p>
+      <p style="font-size: large;">Duration: {{ object.duration }}</p>
+      <p style="font-size: large;">Date: {{ object.date }}</p>
+      <p style="font-size: large;">Average speed: {{ object.get_average_speed }}</p>
+    </div>
+
+
+    <hr>
+    <a href="{{ object.get_absolute_delete_url }}">Delete item</a>
+    
+{% endblock content %}

@@ -233,7 +233,7 @@ def add_to_cart(request, id):
 
         messages.success(request, 'Product has been added to cart!')
         return redirect('shop:cart')
-
+        
 
 def remove_one_from_cart(request, id):
     product = get_object_or_404(models.Product, id=id)

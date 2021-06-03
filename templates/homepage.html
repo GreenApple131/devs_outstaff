@@ -9,27 +9,27 @@
 <div style="margin-left: 10px">
   <p class="h4">Authorization</p>
   <div style="margin-left: 30px">
-    <a href="{% url 'login' %}">login</a>
+    <a href="{% url 'account:login' %}">login</a>
     <br />
-    <a href="{% url 'register' %}">register</a>
+    <a href="{% url 'account:register' %}">register</a>
     <br />
-    <a href="{% url 'logout' %}">logout</a>
+    <a href="{% url 'account:logout' %}">logout</a>
   </div>
   <p class="h4">Permissions</p>
   <div style="margin-left: 30px">
     
     {% if user.is_staff %} 
-    <a href="{% url 'staff-only' %}">staff-only</a>
+    <a href="{% url 'account:staff-only' %}">staff-only</a>
     <br />
     {% else %}
     <p>Staff-only page is hidden, You do not have a permession.</p>
     {% endif %}
-    <a href="{% url 'free-access' %}">free-access</a>
+    <a href="{% url 'account:free-access' %}">free-access</a>
   </div>
   <p class="h4">Profile</p>
   <div style="margin-left: 30px">
     {% if request.user.is_authenticated %} 
-    <a href="{% url 'profile' %}">Profile</a>
+    <a href="{% url 'account:profile' %}">Profile</a>
     {% else %}
     <p>You are not authenticated.</p>
     {% endif %}  
@@ -47,6 +47,16 @@
     <p>You are not authenticated.</p>
     {% endif %}  
   </div>
+</div>
 
+<div style="margin-left: 10px; margin-top: 10px">
+  <p class="h4">Report page (Entries / data / statistics)</p>
+  <div style="margin-left: 30px">
+    {% if request.user.is_authenticated %} 
+    <a href="{% url 'report:entries' %}">Report</a>
+    {% else %}
+    <p>You are not authenticated.</p>
+    {% endif %}  
+  </div>
 </div>
 {% endblock content %}
