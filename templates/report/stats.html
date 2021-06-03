@@ -1,0 +1,68 @@
+{% extends "report/entries.html" %}
+{% load static %}
+{% block title %}
+  Statistics
+{% endblock title %}
+
+{% block content %}
+{% include "report/report-header.html" %}
+
+<h2 style="font-weight: bold; text-align:center;">Last Year statistics</h2>
+  
+  <br>
+
+  <form id="form" name="form" class="form-inline container-lg" style="padding: 15px">
+    <div class="input-group mb-3">
+      <div style="margin: 15px">
+        <label for="date_min">From Date</label>
+        <input id="date_min" name="date_min" type="date" class="form-control" style="width: 300px;" />
+      </div>
+      <div style="margin: 15px">
+        <label for="date_max">To Date</label>
+        <input id="date_max" name="date_max" type="date" class="form-control" style="width: 300px;" />
+      </div>
+      
+      <div style="margin: 15px">
+        <label for="orderingSelect">Ordering</label>
+        <select 
+          class="form-select" 
+          id='orderingSelect' 
+          name='orderingSelect' 
+          aria-label="Default select example"
+          style="width: 200px;"
+          >
+          <option selected value="-date">-date</option>
+          <option value="date">date</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" id="submit_date" class="btn btn-lg btn-warning" style="margin-left: 15px; margin-top: -10px">Filter</button>
+  </form>
+
+  <table class="table table-success table-striped container-lg" style="text-align: center;">
+    <thead>
+      <tr>
+        <th scope="col">Week №</th>
+        <th scope="col">Amount of Entries</th>
+        <th scope="col">Total distance</th>
+        <th scope="col">Total duration</th>
+        <th scope="col">Weekly average speed, Km/h</th>
+      </tr>
+    </thead>
+    <tbody id="entries-result" class="container" style="margin-top: 20px;">
+      <!-- Here will render GETed Entries -->
+      {% for week in weeks %}
+      <tr>
+        <th>{{week.week_number}}</th>
+        <td>{{week.amount_of_entries}}</td>
+        <td>{{week.total_distance}}</td>
+        <td>{{week.total_duration}}</td>
+        <td>{{week.get_weekly_average_speed}}</td>
+      </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock content %}
